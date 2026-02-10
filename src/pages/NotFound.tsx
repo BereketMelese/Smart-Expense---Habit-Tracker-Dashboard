@@ -34,7 +34,7 @@ const NotFoundPage: React.FC = () => {
         <div className="text-center mb-12">
           {/* Animated 404 */}
           <div className="relative flex justify-center mb-8">
-            <div className="text-9xl font-bold text-red-600 opacity-10 animate-pulse">
+            <div className="text-9xl font-bold text-gray-900 opacity-10 animate-pulse">
               404
             </div>
           </div>
