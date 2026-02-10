@@ -190,7 +190,7 @@ const HomePage: React.FC = () => {
 
           <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-16">
             <Link
-              to="/register"
+              to="/auth/register"
               className="group relative px-12 py-5 bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
             >
               <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
@@ -200,7 +200,7 @@ const HomePage: React.FC = () => {
               </span>
             </Link>
             <Link
-              to="/login"
+              to="/auth/login"
               className="group px-12 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:border-white/50"
             >
               <span className="flex items-center gap-2">
@@ -449,7 +449,7 @@ const HomePage: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
               <Link
-                to="/register"
+                to="/auth/register"
                 className="group relative px-16 py-6 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
@@ -459,7 +459,7 @@ const HomePage: React.FC = () => {
                 </span>
               </Link>
               <Link
-                to="/login"
+                to="/auth/login"
                 className="group px-12 py-6 bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-blue-700 font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 Sign In to Existing Account

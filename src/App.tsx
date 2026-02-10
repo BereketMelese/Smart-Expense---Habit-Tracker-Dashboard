@@ -1,13 +1,15 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/Home";
-// import Register from "./pages/auth/Register";
-// import Login from "./pages/auth/Login";
-import PageLayout from "./components/layout/PageLayout";
 import { Suspense } from "react";
-import Loader from "./components/ui/Loader";
-import NotFoundPage from "./pages/NotFound";
-import { AuthProvider } from "./context/AuthContext";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import HomePage from "./pages/Home";
 // import Dashboard from "./pages/dashboard/Dashboard";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import NotFoundPage from "./pages/NotFound";
+import PageLayout from "./components/layout/PageLayout";
+import Loader from "./components/ui/Loader";
+import { AuthProvider } from "./context/AuthContext";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 const router = createBrowserRouter([
   {
@@ -34,14 +36,23 @@ const router = createBrowserRouter([
       //     </Suspense>
       //   ),
       // },
-      // {
-      //   path: "/login",
-      //   element: <Login />,
-      // },
-      // {
-      //   path: "/register",
-      //   element: <Register />,
-      // },
+      {
+        path: "auth",
+        children: [
+          {
+            path: "login",
+            element: <Login />,
+          },
+          {
+            path: "register",
+            element: <Register />,
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPassword />,
+          },
+        ],
+      },
       {
         path: "*",
         element: <NotFoundPage />,

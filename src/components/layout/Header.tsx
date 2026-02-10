@@ -124,14 +124,14 @@ const Header: React.FC = () => {
             ) : (
               <>
                 <Link
-                  to="/login"
+                  to="/auth/login"
                   className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center space-x-2"
                 >
                   <LogIn className="h-4 w-4" />
                   <span>Sign In</span>
                 </Link>
                 <Link
-                  to="/register"
+                  to="/auth/register"
                   className="px-4 py-2 border-2 border-white rounded-lg hover:bg-white/20 transition-colors font-medium flex items-center space-x-2"
                 >
                   <UserPlus className="h-4 w-4" />
