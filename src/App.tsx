@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import HomePage from "./pages/Home";
-// import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import NotFoundPage from "./pages/NotFound";
@@ -28,14 +28,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      // {
-      //   path: "/dashboard",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Dashboard />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "dashboard",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Dashboard />
+          </Suspense>
+        ),
+      },
       {
         path: "auth",
         children: [

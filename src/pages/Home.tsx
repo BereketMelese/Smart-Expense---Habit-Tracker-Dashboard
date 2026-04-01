@@ -18,6 +18,33 @@ import {
 import FeatureCard from "../components/ui/FeatureCard";
 import Card from "../components/ui/Card";
 
+type StatColor = "blue" | "green" | "purple" | "orange";
+
+const statColorClasses: Record<
+  StatColor,
+  {
+    iconBg: string;
+    iconText: string;
+  }
+> = {
+  blue: {
+    iconBg: "bg-linear-to-br from-blue-100 to-blue-50",
+    iconText: "text-blue-600",
+  },
+  green: {
+    iconBg: "bg-linear-to-br from-green-100 to-green-50",
+    iconText: "text-green-600",
+  },
+  purple: {
+    iconBg: "bg-linear-to-br from-purple-100 to-purple-50",
+    iconText: "text-purple-600",
+  },
+  orange: {
+    iconBg: "bg-linear-to-br from-orange-100 to-orange-50",
+    iconText: "text-orange-600",
+  },
+};
+
 const HomePage: React.FC = () => {
   const [animatedNumbers, setAnimatedNumbers] = useState({
     users: 0,
@@ -25,7 +52,12 @@ const HomePage: React.FC = () => {
     habits: 0,
   });
 
-  const stats = [
+  const stats: Array<{
+    icon: React.ComponentType<{ className?: string }>;
+    label: string;
+    value: string;
+    color: StatColor;
+  }> = [
     { icon: Users, label: "Active Users", value: "10,000+", color: "blue" },
     {
       icon: DollarSign,
@@ -232,32 +264,36 @@ const HomePage: React.FC = () => {
       <section className="relative -mt-12 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className="relative group"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="absolute inset-0 bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-xl transform group-hover:-translate-y-2 transition-all duration-300"></div>
-                <div className="relative bg-white p-8 rounded-2xl border border-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-300">
-                  <div
-                    className={`p-3 rounded-xl bg-linear-to-br from-${stat.color}-100 to-${stat.color}-50 w-fit mb-6`}
-                  >
-                    <stat.icon className={`h-8 w-8 text-${stat.color}-600`} />
+            {stats.map((stat, index) => {
+              const colorClass = statColorClasses[stat.color];
+
+              return (
+                <div
+                  key={index}
+                  className="relative group"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <div className="absolute inset-0 bg-linear-to-br from-white to-blue-50 rounded-2xl shadow-xl transform group-hover:-translate-y-2 transition-all duration-300"></div>
+                  <div className="relative bg-white p-8 rounded-2xl border border-gray-100 shadow-lg group-hover:shadow-2xl transition-all duration-300">
+                    <div
+                      className={`p-3 rounded-xl ${colorClass.iconBg} w-fit mb-6`}
+                    >
+                      <stat.icon className={`h-8 w-8 ${colorClass.iconText}`} />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">
+                      {stat.label === "Active Users" &&
+                        `${animatedNumbers.users.toLocaleString()}+`}
+                      {stat.label === "Avg Monthly Savings" &&
+                        `$${animatedNumbers.savings}`}
+                      {stat.label === "Habits Tracked" &&
+                        `${animatedNumbers.habits.toLocaleString()}+`}
+                      {stat.label === "Success Rate" && stat.value}
+                    </div>
+                    <p className="text-gray-600">{stat.label}</p>
                   </div>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
-                    {stat.label === "Active Users" &&
-                      `${animatedNumbers.users.toLocaleString()}+`}
-                    {stat.label === "Avg Monthly Savings" &&
-                      `$${animatedNumbers.savings}`}
-                    {stat.label === "Habits Tracked" &&
-                      `${animatedNumbers.habits.toLocaleString()}+`}
-                    {stat.label === "Success Rate" && stat.value}
-                  </div>
-                  <p className="text-gray-600">{stat.label}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

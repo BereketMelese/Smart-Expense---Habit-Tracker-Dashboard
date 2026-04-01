@@ -18,7 +18,9 @@ import type {
   User,
 } from "../types/auth";
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined,
+);
 
 const MOCK_USERS: User[] = [
   {
@@ -218,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       storageType: null,
     });
 
-    navigate("/login");
+    navigate("/auth/login");
   }, [navigate]);
 
   const updateUser = useCallback((userData: Partial<User>) => {

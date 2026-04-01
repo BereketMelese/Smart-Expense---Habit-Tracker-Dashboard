@@ -42,7 +42,7 @@ const ForgotPassword: React.FC = () => {
           {/* Back to Login */}
           <div className="mb-6">
             <Link
-              to="/login"
+              to="/auth/login"
               className="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
             >
               <ArrowLeft className="h-4 w-4 mr-1" />
