@@ -85,19 +85,20 @@ Current minimum automated coverage includes:
 
 ## Environment Variables
 
-The app currently runs with mock auth/data and does not require environment variables.
+The app supports both mock mode and real backend API mode.
 
-For upcoming API integration, create a `.env` file in project root with:
+Create a `.env` file in project root with:
 
 ```env
-VITE_API_BASE_URL=http://localhost:4000
-VITE_AUTH_MODE=mock
+VITE_API_BASE_URL=http://localhost:4000/api
+VITE_AUTH_MODE=api
 ```
 
 Notes:
 
-- `VITE_API_BASE_URL` will be used by API service modules.
-- `VITE_AUTH_MODE` can be switched from `mock` to `api` after backend wiring.
+- `VITE_API_BASE_URL` should include `/api` because backend routes are mounted under `/api`.
+- `VITE_AUTH_MODE` can be `api` or `mock`.
+- Use `mock` for isolated frontend development when backend is unavailable.
 
 ## Architecture Notes
 

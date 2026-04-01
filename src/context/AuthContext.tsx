@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const session = authService.restoreSession();
+        const session = await authService.restoreSession();
 
         if (session) {
           setAuthState({

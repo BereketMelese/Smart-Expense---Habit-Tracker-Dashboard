@@ -77,7 +77,8 @@ const Header: React.FC = () => {
                 key={item.path}
                 to={item.path}
                 className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors ${
-                  location.pathname === item.path
+                  location.pathname === item.path ||
+                  (item.path !== "/" && location.pathname.startsWith(item.path))
                     ? "bg-white/20"
                     : "hover:bg-white/10"
                 }`}
@@ -163,7 +164,9 @@ const Header: React.FC = () => {
                   key={item.path}
                   to={item.path}
                   className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                    location.pathname === item.path
+                    location.pathname === item.path ||
+                    (item.path !== "/" &&
+                      location.pathname.startsWith(item.path))
                       ? "bg-white/20"
                       : "hover:bg-white/10"
                   }`}
@@ -208,7 +211,7 @@ const Header: React.FC = () => {
                 <>
                   <div className="px-4 py-3 border-t border-white/30 space-y-2">
                     <Link
-                      to="/login"
+                      to="/auth/login"
                       className="flex items-center justify-center px-4 py-3 bg-white text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
                       onClick={() => setMobileMenuOpen(false)}
                     >
@@ -216,7 +219,7 @@ const Header: React.FC = () => {
                       Sign In
                     </Link>
                     <Link
-                      to="/register"
+                      to="/auth/register"
                       className="flex items-center justify-center px-4 py-3 border-2 border-white rounded-lg hover:bg-white/20 transition-colors font-medium"
                       onClick={() => setMobileMenuOpen(false)}
                     >

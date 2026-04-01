@@ -25,11 +25,11 @@ describe("Auth flows", () => {
     const user = userEvent.setup();
     renderWithAuthRoutes(<Login />, "/auth/login");
 
-    await user.type(
-      screen.getByPlaceholderText("you@example.com"),
-      "demo@example.com",
-    );
-    await user.type(screen.getByPlaceholderText("••••••••"), "password123");
+    const emailInput = await screen.findByPlaceholderText("you@example.com");
+    const passwordInput = await screen.findByPlaceholderText("••••••••");
+
+    await user.type(emailInput, "demo@example.com");
+    await user.type(passwordInput, "password123");
 
     await user.click(
       screen.getByRole("button", { name: /sign in to your account/i }),
@@ -44,13 +44,12 @@ describe("Auth flows", () => {
     const user = userEvent.setup();
     renderWithAuthRoutes(<Register />, "/auth/register");
 
-    const passwordInputs = screen.getAllByPlaceholderText("••••••••");
+    const fullNameInput = await screen.findByPlaceholderText("John Doe");
+    const emailInput = await screen.findByPlaceholderText("you@example.com");
+    const passwordInputs = await screen.findAllByPlaceholderText("••••••••");
 
-    await user.type(screen.getByPlaceholderText("John Doe"), "Test User");
-    await user.type(
-      screen.getByPlaceholderText("you@example.com"),
-      "newuser@example.com",
-    );
+    await user.type(fullNameInput, "Test User");
+    await user.type(emailInput, "newuser@example.com");
     await user.type(passwordInputs[0], "Password123");
     await user.type(passwordInputs[1], "Password123");
     await user.click(screen.getByLabelText(/i agree to the/i));

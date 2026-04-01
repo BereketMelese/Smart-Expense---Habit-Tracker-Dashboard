@@ -1,18 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  Wallet,
-  Target,
-  CalendarRange,
-  Flag,
-} from "lucide-react";
+import { LayoutDashboard, Wallet, Target, User, Flag } from "lucide-react";
 
 const navItems = [
   { label: "Overview", to: "/dashboard", icon: LayoutDashboard },
-  { label: "Expenses", to: "/dashboard", icon: Wallet },
-  { label: "Habits", to: "/dashboard", icon: Target },
-  { label: "Calendar", to: "/dashboard", icon: CalendarRange },
+  { label: "Expenses", to: "/expenses", icon: Wallet },
+  { label: "Habits", to: "/habits", icon: Target },
+  { label: "Profile", to: "/profile", icon: User },
 ];
 
 const Sidebar: React.FC = () => {
@@ -32,7 +26,6 @@ const Sidebar: React.FC = () => {
             <NavLink
               key={item.label}
               to={item.to}
-              end
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                   isActive

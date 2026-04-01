@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Mail, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
 import AuthCard from "../../components/ui/AuthCard";
 import Card from "../../components/ui/Card";
+import { authService } from "../../services/authService";
 
 const ForgotPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -18,18 +19,15 @@ const ForgotPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: { email: string }) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock success
+      await authService.forgotPassword(values.email);
       setIsSubmitted(true);
-    } catch (err) {
-      setError("Failed to send reset email. Please try again.");
+    } catch {
+      setError("Failed to send reset instructions. Please try again.");
     } finally {
       setIsLoading(false);
     }

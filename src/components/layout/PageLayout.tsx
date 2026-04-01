@@ -8,7 +8,12 @@ interface LayoutProps {
 
 const PageLayout: React.FC<LayoutProps> = ({ sidebar }) => {
   const location = useLocation();
-  const shouldShowSidebar = location.pathname.startsWith("/dashboard");
+  const shouldShowSidebar = [
+    "/dashboard",
+    "/expenses",
+    "/habits",
+    "/profile",
+  ].some((path) => location.pathname.startsWith(path));
 
   return (
     <div className="min-h-screen flex flex-col">
