@@ -12,6 +12,8 @@ const PageLayout: React.FC<LayoutProps> = ({ sidebar }) => {
     "/dashboard",
     "/expenses",
     "/habits",
+    "/calendar",
+    "/reports",
     "/profile",
   ].some((path) => location.pathname.startsWith(path));
 

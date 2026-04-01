@@ -9,6 +9,8 @@ import {
   Wallet,
   Target,
   User,
+  CalendarDays,
+  FileBarChart2,
   LogOut,
   LogIn,
   UserPlus,
@@ -35,6 +37,16 @@ const Header: React.FC = () => {
       icon: <Wallet className="h-5 w-5" />,
     },
     { path: "/habits", label: "Habits", icon: <Target className="h-5 w-5" /> },
+    {
+      path: "/calendar",
+      label: "Calendar",
+      icon: <CalendarDays className="h-5 w-5" />,
+    },
+    {
+      path: "/reports",
+      label: "Reports",
+      icon: <FileBarChart2 className="h-5 w-5" />,
+    },
     { path: "/profile", label: "Profile", icon: <User className="h-5 w-5" /> },
   ];
 

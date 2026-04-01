@@ -1,11 +1,21 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Wallet, Target, User, Flag } from "lucide-react";
+import {
+  LayoutDashboard,
+  Wallet,
+  Target,
+  User,
+  CalendarDays,
+  FileBarChart2,
+  Flag,
+} from "lucide-react";
 
 const navItems = [
   { label: "Overview", to: "/dashboard", icon: LayoutDashboard },
   { label: "Expenses", to: "/expenses", icon: Wallet },
   { label: "Habits", to: "/habits", icon: Target },
+  { label: "Calendar", to: "/calendar", icon: CalendarDays },
+  { label: "Reports", to: "/reports", icon: FileBarChart2 },
   { label: "Profile", to: "/profile", icon: User },
 ];
 

@@ -6,6 +6,8 @@ import Dashboard from "./pages/dashboard/Dashboard";
 import Expenses from "./pages/dashboard/Expenses";
 import Habits from "./pages/dashboard/Habits";
 import Profile from "./pages/dashboard/Profile";
+import CalendarPage from "./pages/dashboard/Calendar";
+import Reports from "./pages/dashboard/Reports";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import NotFoundPage from "./pages/NotFound";
@@ -68,6 +70,26 @@ const router = createBrowserRouter([
           <ProtectedRoute>
             <Suspense fallback={<Loader />}>
               <Profile />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "calendar",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<Loader />}>
+              <CalendarPage />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "reports",
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={<Loader />}>
+              <Reports />
             </Suspense>
           </ProtectedRoute>
         ),

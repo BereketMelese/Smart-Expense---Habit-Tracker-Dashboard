@@ -226,10 +226,10 @@ const Dashboard: React.FC = () => {
                 Add Habit Check-in
               </button>
               <button
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/reports")}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-medium px-4 py-3 transition-colors"
               >
-                Manage Profile
+                View Full Reports
               </button>
             </div>
           </Card>
