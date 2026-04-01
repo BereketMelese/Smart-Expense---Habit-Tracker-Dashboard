@@ -1,73 +1,133 @@
-# React + TypeScript + Vite
+# Smart Expense + Habit Tracker Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Smart Expense + Habit Tracker Dashboard is a React + TypeScript app that combines personal finance tracking and habit consistency in a single dashboard UX.
 
-Currently, two official plugins are available:
+## Project Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Landing page with feature marketing and product positioning
+- Auth flows: login, register, forgot password
+- Dashboard shell MVP with summary cards, transactions, habit progress, and quick actions
+- Protected dashboard routing (unauthenticated users redirect to auth login)
+- Auth service boundary ready for backend integration (currently mock-backed)
 
-## React Compiler
+## Feature Status
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Done: Public home page
+- Done: Auth forms with validation and feedback states
+- Done: Auth context + service boundary
+- Done: Token expiry handling with session auto-expiration
+- Done: Protected dashboard route
+- Done: Dashboard shell + sidebar MVP
+- In progress: Wiring quick actions to real data entry flows
+- Planned: Backend API integration and persistent data models
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript 5
+- Vite 7
+- Tailwind CSS 4
+- React Router 7
+- Formik + Yup
+- Vitest + Testing Library
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Local Setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Install dependencies:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Start development server:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+3. Build for production:
+
+```bash
+npm run build
+```
+
+4. Preview production build:
+
+```bash
+npm run preview
+```
+
+## Testing
+
+Run all tests:
+
+```bash
+npm run test:run
+```
+
+Watch mode:
+
+```bash
+npm run test
+```
+
+Coverage:
+
+```bash
+npm run test:coverage
+```
+
+Current minimum automated coverage includes:
+
+- Unit tests for AuthContext behavior
+- Integration tests for login/register flows
+- Route guard test for protected route redirects
+
+## Environment Variables
+
+The app currently runs with mock auth/data and does not require environment variables.
+
+For upcoming API integration, create a `.env` file in project root with:
+
+```env
+VITE_API_BASE_URL=http://localhost:4000
+VITE_AUTH_MODE=mock
+```
+
+Notes:
+
+- `VITE_API_BASE_URL` will be used by API service modules.
+- `VITE_AUTH_MODE` can be switched from `mock` to `api` after backend wiring.
+
+## Architecture Notes
+
+### Routing
+
+- Route entry lives in `src/App.tsx`
+- Public routes: home + auth pages
+- Protected route wrapper: `src/components/routing/ProtectedRoute.tsx`
+- Dashboard route guarded and redirected to `/auth/login` when unauthenticated
+
+### Authentication
+
+- Context API layer: `src/context/AuthContext.tsx`
+- Service boundary: `src/services/authService.ts`
+- Service exposes `login`, `register`, `refreshToken`, `restoreSession`, `logout`
+- Token expiry timestamp is persisted and enforced in context lifecycle
+
+### UI Components
+
+- Layout shell: `src/components/layout`
+- Reusable card primitives: `src/components/ui/Card.tsx`
+- Auth-specific reusable container: `src/components/ui/AuthCard.tsx`
+- Page modules in `src/pages` with route-level composition
+
+## Roadmap / TODO
+
+- Add dashboard data service and connect quick-action buttons to modals/forms
+- Add expenses CRUD flow with categories and monthly trend chart
+- Add habit CRUD flow with streak calendar and reminders
+- Implement API auth mode with real JWT refresh endpoints
+- Add route-level code splitting for dashboard modules
+- Add e2e coverage for critical auth and dashboard journeys
+- Add CI for lint, build, and test gates

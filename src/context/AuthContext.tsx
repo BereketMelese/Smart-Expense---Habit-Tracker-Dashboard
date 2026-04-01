@@ -5,6 +5,7 @@ import {
   createContext,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -17,33 +18,21 @@ import type {
   RegisterData,
   User,
 } from "../types/auth";
+import { authService } from "../services/authService";
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined,
 );
 
-const MOCK_USERS: User[] = [
-  {
-    id: "1",
-    email: "demo@example.com",
-    name: "Demo User",
-    avatar: "https://i.pravatar.cc/150?img=1",
-  },
-  {
-    id: "2",
-    email: "demo2@example.com",
-    name: "Demo User 2",
-    avatar: "https://i.pravatar.cc/150?img=2",
-  },
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const hasInitialized = useRef(false);
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     token: null,
+    tokenExpiresAt: null,
     isAuthenticated: false,
-    isLoading: false,
+    isLoading: true,
     error: null,
     storageType: null,
   });
@@ -61,40 +50,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token =
-          localStorage.getItem("auth_token") ||
-          sessionStorage.getItem("auth_token");
-        const userStr =
-          localStorage.getItem("auth_user") ||
-          sessionStorage.getItem("auth_user");
-        const storageType = localStorage.getItem("auth_token")
-          ? "local"
-          : sessionStorage.getItem("auth_token")
-            ? "session"
-            : null;
+        const session = authService.restoreSession();
 
-        if (token && userStr && storageType) {
-          const user = JSON.parse(userStr);
+        if (session) {
           setAuthState({
-            user,
-            token,
+            user: session.user,
+            token: session.token,
+            tokenExpiresAt: session.expiresAt,
             isAuthenticated: true,
             isLoading: false,
             error: null,
-            storageType,
+            storageType: session.storageType,
           });
         } else {
           setAuthState((prev) => ({ ...prev, isLoading: false }));
         }
       } catch (err) {
         console.error("Auth init failed:", err);
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_user");
-        sessionStorage.removeItem("auth_token");
-        sessionStorage.removeItem("auth_user");
+        authService.logout();
         setAuthState({
           user: null,
           token: null,
+          tokenExpiresAt: null,
           isAuthenticated: false,
           isLoading: false,
           error: null,
@@ -106,47 +83,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     initializeAuth();
   }, []);
 
-  const mockApiCall = useCallback(
-    async <T,>(data: T, success = true, delay = 1000): Promise<T> =>
-      new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (success) {
-            resolve(data);
-          } else {
-            reject(new Error("Mock API error"));
-          }
-        }, delay);
-      }),
-    [],
-  );
+  useEffect(() => {
+    if (!hasInitialized.current) {
+      hasInitialized.current = true;
+      return;
+    }
+
+    if (!authState.isAuthenticated || !authState.tokenExpiresAt) {
+      return;
+    }
+
+    const timeToExpiry = authState.tokenExpiresAt - Date.now();
+    if (timeToExpiry <= 0) {
+      authService.logout();
+      setAuthState({
+        user: null,
+        token: null,
+        tokenExpiresAt: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: "Session expired. Please sign in again.",
+        storageType: null,
+      });
+      navigate("/auth/login", { replace: true });
+      return;
+    }
+
+    const maxTimeout = 2_147_483_647;
+    const timeout = window.setTimeout(
+      () => {
+        authService.logout();
+        setAuthState({
+          user: null,
+          token: null,
+          tokenExpiresAt: null,
+          isAuthenticated: false,
+          isLoading: false,
+          error: "Session expired. Please sign in again.",
+          storageType: null,
+        });
+        navigate("/auth/login", { replace: true });
+      },
+      Math.min(timeToExpiry, maxTimeout),
+    );
+
+    return () => window.clearTimeout(timeout);
+  }, [authState.isAuthenticated, authState.tokenExpiresAt, navigate]);
 
   const login = useCallback(
     async (credentials: LoginCredentials) => {
       setAuthState((prev) => ({ ...prev, isLoading: true, error: null }));
 
       try {
-        const user = MOCK_USERS.find((u) => u.email === credentials.email);
-        if (!user) throw new Error("Invalid email or password");
-
-        const token = `mock-jwt-${user.id}-${Date.now()}`;
-        const storage = credentials.rememberMe ? localStorage : sessionStorage;
-        const storageType: "local" | "session" = credentials.rememberMe
-          ? "local"
-          : "session";
-
-        storage.setItem("auth_token", token);
-        storage.setItem("auth_user", JSON.stringify(user));
+        const session = await authService.login(credentials);
 
         setAuthState({
-          user,
-          token,
+          user: session.user,
+          token: session.token,
+          tokenExpiresAt: session.expiresAt,
           isAuthenticated: true,
           isLoading: false,
           error: null,
-          storageType,
+          storageType: session.storageType,
         });
 
-        await mockApiCall({ success: true });
         navigate("/dashboard");
       } catch (err) {
         const message = err instanceof Error ? err.message : "Login failed";
@@ -154,7 +154,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw err;
       }
     },
-    [navigate, mockApiCall],
+    [navigate],
   );
 
   const register = useCallback(
@@ -168,32 +168,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        if (MOCK_USERS.some((u) => u.email === data.email)) {
-          throw new Error("Email already in use");
-        }
-
-        const newUser: User = {
-          id: `u-${Date.now()}`,
-          email: data.email,
-          name: data.name,
-          avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70 + 1)}`,
-        };
-
-        const token = `mock-jwt-${newUser.id}-${Date.now()}`;
-
-        localStorage.setItem("auth_token", token);
-        localStorage.setItem("auth_user", JSON.stringify(newUser));
+        const session = await authService.register(data);
 
         setAuthState({
-          user: newUser,
-          token,
+          user: session.user,
+          token: session.token,
+          tokenExpiresAt: session.expiresAt,
           isAuthenticated: true,
           isLoading: false,
           error: null,
-          storageType: "local",
+          storageType: session.storageType,
         });
 
-        await mockApiCall({ success: true });
         navigate("/dashboard");
       } catch (err) {
         const message =
@@ -202,18 +188,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw err;
       }
     },
-    [navigate, mockApiCall],
+    [navigate],
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("auth_user");
-    sessionStorage.removeItem("auth_token");
-    sessionStorage.removeItem("auth_user");
+    authService.logout();
 
     setAuthState({
       user: null,
       token: null,
+      tokenExpiresAt: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -227,12 +211,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthState((prev) => {
       if (!prev.user) return prev;
       const updated = { ...prev.user, ...userData };
-
-      if (prev.storageType === "local") {
-        localStorage.setItem("auth_user", JSON.stringify(updated));
-      } else if (prev.storageType === "session") {
-        sessionStorage.setItem("auth_user", JSON.stringify(updated));
-      }
+      authService.updateStoredUser(userData);
 
       return { ...prev, user: updated };
     });
@@ -244,16 +223,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshToken = useCallback(async () => {
     try {
-      const token =
-        localStorage.getItem("auth_token") ||
-        sessionStorage.getItem("auth_token");
-      if (!token) return false;
-      await mockApiCall({ success: true }, true, 800);
+      const refreshedSession = await authService.refreshToken();
+      if (!refreshedSession) {
+        setAuthState((prev) => ({
+          ...prev,
+          user: null,
+          token: null,
+          tokenExpiresAt: null,
+          isAuthenticated: false,
+          storageType: null,
+        }));
+        return false;
+      }
+
+      setAuthState((prev) => ({
+        ...prev,
+        user: refreshedSession.user,
+        token: refreshedSession.token,
+        tokenExpiresAt: refreshedSession.expiresAt,
+        isAuthenticated: true,
+        storageType: refreshedSession.storageType,
+      }));
+
       return true;
     } catch {
       return false;
     }
-  }, [mockApiCall]);
+  }, []);
 
   const value: AuthContextType = {
     ...authState,

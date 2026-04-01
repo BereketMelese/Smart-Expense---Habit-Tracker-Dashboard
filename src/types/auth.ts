@@ -21,6 +21,7 @@ export interface RegisterData extends LoginCredentials {
 export interface AuthState {
   user: User | null;
   token: string | null;
+  tokenExpiresAt: number | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;

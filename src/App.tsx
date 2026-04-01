@@ -8,6 +8,7 @@ import Register from "./pages/auth/Register";
 import NotFoundPage from "./pages/NotFound";
 import PageLayout from "./components/layout/PageLayout";
 import Loader from "./components/ui/Loader";
+import ProtectedRoute from "./components/routing/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 
@@ -31,9 +32,11 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: (
-          <Suspense fallback={<Loader />}>
-            <Dashboard />
-          </Suspense>
+          <ProtectedRoute>
+            <Suspense fallback={<Loader />}>
+              <Dashboard />
+            </Suspense>
+          </ProtectedRoute>
         ),
       },
       {
