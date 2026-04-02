@@ -401,12 +401,17 @@ export const authService = {
       const refreshToken =
         session?.refreshToken ??
         (session ? getStoredRefreshToken(session.storageType) : null);
+      const accessToken = session?.token;
 
-      if (refreshToken) {
-        void apiRequest<null>("/auth/logout", {
-          method: "POST",
-          body: JSON.stringify({ refreshToken }),
-        }).catch(() => undefined);
+      if (refreshToken && accessToken) {
+        void apiRequest<null>(
+          "/auth/logout",
+          {
+            method: "POST",
+            body: JSON.stringify({ refreshToken }),
+          },
+          accessToken,
+        ).catch(() => undefined);
       }
     }
 
