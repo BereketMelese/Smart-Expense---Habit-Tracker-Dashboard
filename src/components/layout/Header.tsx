@@ -213,7 +213,7 @@ const Header: React.FC = () => {
 
           {/* Mobile menu button */}
           <button
-            className="md:hidden p-2 rounded-full hover:bg-white/10 transition-colors"
+            className="md:hidden ml-auto p-2 rounded-full hover:bg-white/10 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
           >
