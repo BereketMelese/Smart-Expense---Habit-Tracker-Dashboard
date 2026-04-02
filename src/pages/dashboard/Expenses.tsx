@@ -30,7 +30,7 @@ const Expenses: React.FC = () => {
 
     try {
       const data = await expensesService.list();
-      setExpenses(data);
+      setExpenses(data.items);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load expenses");
     } finally {

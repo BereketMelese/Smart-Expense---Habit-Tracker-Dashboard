@@ -61,7 +61,7 @@ const CalendarPage: React.FC = () => {
           return next;
         };
 
-        expenses.forEach((expense) => {
+        expenses.items.forEach((expense) => {
           const dateKey = expense.expenseDate.slice(0, 10);
           const day = ensureDay(dateKey);
           day.expenseTotal += Number(expense.amount);

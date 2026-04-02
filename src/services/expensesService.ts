@@ -1,9 +1,9 @@
 import { apiClient } from "./apiClient";
-import type { Expense, ExpenseInput } from "../types/expense";
+import type { Expense, ExpenseInput, ExpenseListResponse } from "../types/expense";
 
 export const expensesService = {
   list() {
-    return apiClient.request<Expense[]>("/expenses");
+    return apiClient.request<ExpenseListResponse>("/expenses");
   },
 
   create(payload: ExpenseInput) {

@@ -27,7 +27,7 @@ const Reports: React.FC = () => {
 
         setSummary(summaryData);
         setHabitProgress(habitsData);
-        setExpenses(expensesData);
+        setExpenses(expensesData.items);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load report data",
