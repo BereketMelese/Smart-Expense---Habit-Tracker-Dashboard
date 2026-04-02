@@ -36,3 +36,15 @@ export interface AuthContextType extends AuthState {
   clearError: () => void;
   refreshToken: () => Promise<boolean>;
 }
+
+export interface ForgotPasswordResult {
+  email: string;
+  resetToken: string | null;
+  accepted: boolean;
+  delivery: string;
+}
+
+export interface ResetPasswordPayload {
+  resetToken: string;
+  password: string;
+}

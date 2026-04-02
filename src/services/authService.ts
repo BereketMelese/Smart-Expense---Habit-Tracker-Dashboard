@@ -1,4 +1,10 @@
-import type { LoginCredentials, RegisterData, User } from "../types/auth";
+import type {
+  ForgotPasswordResult,
+  LoginCredentials,
+  RegisterData,
+  ResetPasswordPayload,
+  User,
+} from "../types/auth";
 
 const AUTH_TOKEN_KEY = "auth_token";
 const AUTH_USER_KEY = "auth_user";
@@ -62,6 +68,13 @@ interface RefreshApiData {
   accessToken: string;
   refreshToken: string;
   expiresIn?: string;
+}
+
+interface ForgotPasswordApiData {
+  email: string;
+  resetToken: string | null;
+  accepted: boolean;
+  delivery: string;
 }
 
 const getStorageByType = (storageType: "local" | "session") =>
@@ -400,11 +413,35 @@ export const authService = {
     clearStorage();
   },
 
-  async forgotPassword(email: string): Promise<void> {
+  async forgotPassword(email: string): Promise<ForgotPasswordResult> {
     if (isApiMode()) {
-      await apiRequest<null>("/auth/forgot-password", {
+      const payload = await apiRequest<ForgotPasswordApiData>(
+        "/auth/forgot-password",
+        {
+          method: "POST",
+          body: JSON.stringify({ email }),
+        },
+      );
+
+      return payload.data;
+    }
+
+    await simulateLatency(900);
+    const user = MOCK_USERS.find((item) => item.email === email);
+
+    return {
+      email,
+      delivery: "mock",
+      accepted: true,
+      resetToken: user ? `mock-reset-${user.id}` : null,
+    };
+  },
+
+  async resetPassword(payload: ResetPasswordPayload): Promise<void> {
+    if (isApiMode()) {
+      await apiRequest<null>("/auth/reset-password", {
         method: "POST",
-        body: JSON.stringify({ email }),
+        body: JSON.stringify(payload),
       });
       return;
     }

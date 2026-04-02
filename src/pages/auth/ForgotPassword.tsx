@@ -18,13 +18,16 @@ const ForgotPassword: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetToken, setResetToken] = useState<string | null>(null);
 
   const handleSubmit = async (values: { email: string }) => {
     setIsLoading(true);
     setError(null);
+    setResetToken(null);
 
     try {
-      await authService.forgotPassword(values.email);
+      const result = await authService.forgotPassword(values.email);
+      setResetToken(result.resetToken);
       setIsSubmitted(true);
     } catch {
       setError("Failed to send reset instructions. Please try again.");
@@ -65,6 +68,21 @@ const ForgotPassword: React.FC = () => {
                   Please check your inbox and follow the link to reset your
                   password.
                 </p>
+                {resetToken && (
+                  <div className="mt-4 rounded-lg border border-green-200 bg-green-50 p-3">
+                    <p className="text-xs font-medium text-green-700 mb-2">
+                      Demo reset link
+                    </p>
+                    <Link
+                      to={`/auth/reset-password?token=${encodeURIComponent(
+                        resetToken,
+                      )}`}
+                      className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                    >
+                      Continue to reset password
+                    </Link>
+                  </div>
+                )}
                 <div className="mt-4 pt-4 border-t border-green-200">
                   <p className="text-xs text-green-600">
                     Didn't receive the email?{" "}

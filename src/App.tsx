@@ -10,6 +10,7 @@ import CalendarPage from "./pages/dashboard/Calendar";
 import Reports from "./pages/dashboard/Reports";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import ResetPassword from "./pages/auth/ResetPassword";
 import NotFoundPage from "./pages/NotFound";
 import PageLayout from "./components/layout/PageLayout";
 import Loader from "./components/ui/Loader";
@@ -108,6 +109,10 @@ const router = createBrowserRouter([
           {
             path: "forgot-password",
             element: <ForgotPassword />,
+          },
+          {
+            path: "reset-password",
+            element: <ResetPassword />,
           },
         ],
       },
