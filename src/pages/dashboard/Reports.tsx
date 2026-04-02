@@ -18,23 +18,50 @@ const Reports: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      try {
-        const [summaryData, habitsData, expensesData] = await Promise.all([
+      const [summaryResult, habitsResult, expensesResult] =
+        await Promise.allSettled([
           dashboardService.getSummary(),
           dashboardService.getHabitProgress(),
           expensesService.list(),
         ]);
 
-        setSummary(summaryData);
-        setHabitProgress(habitsData);
-        setExpenses(expensesData.items);
-      } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load report data",
+      const errors: string[] = [];
+
+      if (summaryResult.status === "fulfilled") {
+        setSummary(summaryResult.value);
+      } else {
+        errors.push(
+          summaryResult.reason instanceof Error
+            ? summaryResult.reason.message
+            : "Failed to load report summary.",
         );
-      } finally {
-        setIsLoading(false);
       }
+
+      if (habitsResult.status === "fulfilled") {
+        setHabitProgress(habitsResult.value);
+      } else {
+        errors.push(
+          habitsResult.reason instanceof Error
+            ? habitsResult.reason.message
+            : "Failed to load habit progress.",
+        );
+      }
+
+      if (expensesResult.status === "fulfilled") {
+        setExpenses(expensesResult.value.items);
+      } else {
+        errors.push(
+          expensesResult.reason instanceof Error
+            ? expensesResult.reason.message
+            : "Failed to load expenses.",
+        );
+      }
+
+      if (errors.length > 0) {
+        setError(errors.join(" "));
+      }
+
+      setIsLoading(false);
     };
 
     void loadReports();

@@ -33,23 +33,50 @@ const Dashboard: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      try {
-        const [summaryData, transactionsData, habitData] = await Promise.all([
+      const [summaryResult, transactionsResult, habitResult] =
+        await Promise.allSettled([
           dashboardService.getSummary(),
           dashboardService.getRecentTransactions(),
           dashboardService.getHabitProgress(),
         ]);
 
-        setSummary(summaryData);
-        setRecentTransactions(transactionsData);
-        setHabits(habitData);
-      } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "Failed to load dashboard data.";
-        setError(message);
-      } finally {
-        setIsLoading(false);
+      const errors: string[] = [];
+
+      if (summaryResult.status === "fulfilled") {
+        setSummary(summaryResult.value);
+      } else {
+        errors.push(
+          summaryResult.reason instanceof Error
+            ? summaryResult.reason.message
+            : "Failed to load dashboard summary.",
+        );
       }
+
+      if (transactionsResult.status === "fulfilled") {
+        setRecentTransactions(transactionsResult.value);
+      } else {
+        errors.push(
+          transactionsResult.reason instanceof Error
+            ? transactionsResult.reason.message
+            : "Failed to load recent transactions.",
+        );
+      }
+
+      if (habitResult.status === "fulfilled") {
+        setHabits(habitResult.value);
+      } else {
+        errors.push(
+          habitResult.reason instanceof Error
+            ? habitResult.reason.message
+            : "Failed to load habit progress.",
+        );
+      }
+
+      if (errors.length > 0) {
+        setError(errors.join(" "));
+      }
+
+      setIsLoading(false);
     };
 
     void loadDashboard();
