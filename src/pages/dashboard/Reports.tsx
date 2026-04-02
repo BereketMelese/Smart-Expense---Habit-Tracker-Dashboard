@@ -3,13 +3,16 @@ import { FileBarChart2, AlertCircle } from "lucide-react";
 import Card from "../../components/ui/Card";
 import { dashboardService } from "../../services/dashboardService";
 import { expensesService } from "../../services/expensesService";
+import { incomesService } from "../../services/incomesService.ts";
 import type { Expense } from "../../types/expense";
 import type { DashboardSummary, HabitProgress } from "../../types/dashboard";
+import type { Income } from "../../types/income.ts";
 
 const Reports: React.FC = () => {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [habitProgress, setHabitProgress] = useState<HabitProgress[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [incomes, setIncomes] = useState<Income[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,11 +21,12 @@ const Reports: React.FC = () => {
       setIsLoading(true);
       setError(null);
 
-      const [summaryResult, habitsResult, expensesResult] =
+      const [summaryResult, habitsResult, expensesResult, incomesResult] =
         await Promise.allSettled([
           dashboardService.getSummary(),
           dashboardService.getHabitProgress(),
           expensesService.list(),
+          incomesService.list(),
         ]);
 
       const errors: string[] = [];
@@ -57,6 +61,16 @@ const Reports: React.FC = () => {
         );
       }
 
+      if (incomesResult.status === "fulfilled") {
+        setIncomes(incomesResult.value.items);
+      } else {
+        errors.push(
+          incomesResult.reason instanceof Error
+            ? incomesResult.reason.message
+            : "Failed to load income.",
+        );
+      }
+
       if (errors.length > 0) {
         setError(errors.join(" "));
       }
@@ -84,6 +98,12 @@ const Reports: React.FC = () => {
       .sort((a, b) => Number(b.amount) - Number(a.amount))
       .slice(0, 5);
   }, [expenses]);
+
+  const topIncomes = useMemo(() => {
+    return [...incomes]
+      .sort((a, b) => Number(b.amount) - Number(a.amount))
+      .slice(0, 5);
+  }, [incomes]);
 
   const avgHabitProgress = useMemo(() => {
     if (habitProgress.length === 0) return 0;
@@ -119,6 +139,14 @@ const Reports: React.FC = () => {
                 {isLoading || !summary
                   ? "--"
                   : `$${summary.monthlySpend.toFixed(2)}`}
+              </p>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-white p-4">
+              <p className="text-slate-500">Monthly Income</p>
+              <p className="mt-1 text-2xl font-semibold">
+                {isLoading || !summary
+                  ? "--"
+                  : `$${summary.monthlyIncome.toFixed(2)}`}
               </p>
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -220,6 +248,34 @@ const Reports: React.FC = () => {
             )}
           </Card>
         </div>
+
+        <Card className="max-w-none" title="Top Income" color="green">
+          {isLoading ? (
+            <div className="space-y-3">
+              <div className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+              <div className="h-12 rounded-lg bg-slate-100 animate-pulse" />
+            </div>
+          ) : topIncomes.length === 0 ? (
+            <p className="text-sm text-slate-500">No income available.</p>
+          ) : (
+            <div className="space-y-2">
+              {topIncomes.map((income) => (
+                <div
+                  key={income.id}
+                  className="rounded-lg border border-slate-200 bg-white px-4 py-3 flex items-center justify-between"
+                >
+                  <div>
+                    <p className="font-medium text-slate-800">{income.title}</p>
+                    <p className="text-xs text-slate-500">{income.category}</p>
+                  </div>
+                  <p className="font-semibold text-emerald-700">
+                    ${Number(income.amount).toFixed(2)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
       </div>
     </section>
   );

@@ -15,8 +15,19 @@ const EMPTY_FORM: HabitInput = {
   name: "",
   targetType: "DAILY",
   targetCount: 1,
+  scheduledWeekdays: [],
   color: "#0ea5e9",
 };
+
+const WEEKDAY_OPTIONS = [
+  { value: 0, label: "Sun" },
+  { value: 1, label: "Mon" },
+  { value: 2, label: "Tue" },
+  { value: 3, label: "Wed" },
+  { value: 4, label: "Thu" },
+  { value: 5, label: "Fri" },
+  { value: 6, label: "Sat" },
+];
 
 const Habits: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
@@ -59,6 +70,17 @@ const Habits: React.FC = () => {
       }));
     };
 
+  const toggleWeekday = (weekday: number) => {
+    setForm((prev) => ({
+      ...prev,
+      scheduledWeekdays: prev.scheduledWeekdays.includes(weekday)
+        ? prev.scheduledWeekdays.filter((item) => item !== weekday)
+        : [...prev.scheduledWeekdays, weekday].sort(
+            (left, right) => left - right,
+          ),
+    }));
+  };
+
   const resetForm = () => {
     setForm(EMPTY_FORM);
     setEditingId(null);
@@ -93,6 +115,7 @@ const Habits: React.FC = () => {
       name: habit.name,
       targetType: habit.targetType,
       targetCount: habit.targetCount,
+      scheduledWeekdays: habit.scheduledWeekdays ?? [],
       color: habit.color ?? "#0ea5e9",
     });
   };
@@ -173,6 +196,31 @@ const Habits: React.FC = () => {
               className="border border-slate-300 rounded-lg px-3 py-2"
               required
             />
+            {form.targetType === "WEEKLY" && (
+              <div className="md:col-span-2 space-y-2">
+                <p className="text-sm text-slate-600">Scheduled weekdays</p>
+                <div className="flex flex-wrap gap-2">
+                  {WEEKDAY_OPTIONS.map((day) => {
+                    const selected = form.scheduledWeekdays.includes(day.value);
+
+                    return (
+                      <button
+                        key={day.value}
+                        type="button"
+                        onClick={() => toggleWeekday(day.value)}
+                        className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
+                          selected
+                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {day.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             <input
               type="color"
               value={form.color ?? "#0ea5e9"}
@@ -224,6 +272,21 @@ const Habits: React.FC = () => {
                     <p className="text-xs text-slate-500">
                       {habit.targetType} • target {habit.targetCount}
                     </p>
+                    {habit.targetType === "WEEKLY" &&
+                      habit.scheduledWeekdays.length > 0 && (
+                        <p className="text-xs text-slate-500 mt-1">
+                          Days:{" "}
+                          {habit.scheduledWeekdays
+                            .map(
+                              (weekday) =>
+                                WEEKDAY_OPTIONS.find(
+                                  (day) => day.value === weekday,
+                                )?.label,
+                            )
+                            .filter(Boolean)
+                            .join(", ")}
+                        </p>
+                      )}
                   </div>
                   <div className="flex items-center gap-2">
                     <button

@@ -103,6 +103,15 @@ const Dashboard: React.FC = () => {
         color: "green" as const,
       },
       {
+        title: "Monthly Income",
+        value:
+          summary !== null ? `$${summary.monthlyIncome.toFixed(2)}` : "$0.00",
+        change: "Current month income",
+        positive: true,
+        icon: ArrowUpRight,
+        color: "green" as const,
+      },
+      {
         title: "Habit Streak",
         value: summary !== null ? `${summary.currentStreak} days` : "0 days",
         change: "Current streak across habits",

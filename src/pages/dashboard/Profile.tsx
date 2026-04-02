@@ -7,11 +7,14 @@ const Profile: React.FC = () => {
   const { user, updateUser, storageType, tokenExpiresAt } = useAuth();
   const [name, setName] = useState(user?.name ?? "");
   const [avatar, setAvatar] = useState(user?.avatar ?? "");
+  const [startingBalance, setStartingBalance] = useState(
+    String(user?.startingBalance ?? 5000),
+  );
   const [saved, setSaved] = useState(false);
 
   const handleSave = (event: React.FormEvent) => {
     event.preventDefault();
-    updateUser({ name, avatar });
+    updateUser({ name, avatar, startingBalance: Number(startingBalance) });
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1500);
   };
@@ -47,6 +50,19 @@ const Profile: React.FC = () => {
                 placeholder="https://..."
               />
             </div>
+            <div>
+              <label className="block text-sm text-slate-700 mb-1">
+                Starting Balance
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={startingBalance}
+                onChange={(event) => setStartingBalance(event.target.value)}
+                className="w-full border border-slate-300 rounded-lg px-3 py-2"
+              />
+            </div>
             <button
               type="submit"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
@@ -78,6 +94,12 @@ const Profile: React.FC = () => {
               <p className="text-slate-500">Session Storage</p>
               <p className="mt-1 font-medium text-slate-800">
                 {storageType ?? "-"}
+              </p>
+            </div>
+            <div className="rounded-lg border border-slate-200 p-4 bg-white">
+              <p className="text-slate-500">Starting Balance</p>
+              <p className="mt-1 font-medium text-slate-800">
+                ${Number(user?.startingBalance ?? 0).toFixed(2)}
               </p>
             </div>
             <div className="rounded-lg border border-slate-200 p-4 bg-white md:col-span-2">

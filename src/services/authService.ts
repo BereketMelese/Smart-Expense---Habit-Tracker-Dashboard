@@ -23,12 +23,14 @@ const MOCK_USERS: User[] = [
     email: "demo@example.com",
     name: "Demo User",
     avatar: "https://i.pravatar.cc/150?img=1",
+    startingBalance: 5000,
   },
   {
     id: "2",
     email: "demo2@example.com",
     name: "Demo User 2",
     avatar: "https://i.pravatar.cc/150?img=2",
+    startingBalance: 5000,
   },
 ];
 
@@ -54,6 +56,7 @@ interface ApiUser {
   email: string;
   name: string;
   avatarUrl?: string | null;
+  startingBalance?: number;
   createdAt?: string;
 }
 
@@ -165,6 +168,7 @@ const toUser = (apiUser: ApiUser): User => ({
   email: apiUser.email,
   name: apiUser.name,
   avatar: apiUser.avatarUrl ?? undefined,
+  startingBalance: apiUser.startingBalance ?? 5000,
 });
 
 const parseApiError = async (response: Response) => {
@@ -291,6 +295,7 @@ export const authService = {
         email: data.email,
         name: data.name,
         avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70 + 1)}`,
+        startingBalance: 5000,
       },
       token: `mock-jwt-u-${now}-${now}`,
       expiresAt: now + 1000 * 60 * 60 * 24 * 30,

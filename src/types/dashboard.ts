@@ -1,5 +1,6 @@
 export interface DashboardSummary {
   currentBalance: number;
+  monthlyIncome: number;
   monthlySpend: number;
   currentStreak: number;
 }

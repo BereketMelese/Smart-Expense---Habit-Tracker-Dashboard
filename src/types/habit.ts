@@ -5,6 +5,7 @@ export interface Habit {
   name: string;
   targetType: HabitTargetType;
   targetCount: number;
+  scheduledWeekdays: number[];
   color?: string;
   createdAt?: string;
 }
@@ -13,6 +14,7 @@ export interface HabitInput {
   name: string;
   targetType: HabitTargetType;
   targetCount: number;
+  scheduledWeekdays: number[];
   color?: string;
 }
 
