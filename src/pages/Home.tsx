@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import FeatureCard from "../components/ui/FeatureCard";
 import Card from "../components/ui/Card";
+import { useAuth } from "../hooks/useAuth";
 
 type StatColor = "blue" | "green" | "purple" | "orange";
 
@@ -46,6 +47,7 @@ const statColorClasses: Record<
 };
 
 const HomePage: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const [animatedNumbers, setAnimatedNumbers] = useState({
     users: 0,
     savings: 0,
@@ -189,9 +191,9 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex-1 min-h-screen bg-linear-to-b from-gray-50 via-white to-blue-50/30">
+    <div className="flex-1 min-h-screen bg-linear-to-b from-slate-50 via-white to-blue-50/30 text-slate-900">
       {/* Hero Section with animated background */}
-      <section className="relative overflow-hidden bg-linear-to-br from-blue-900 via-blue-800 to-indigo-900 text-white py-24 md:py-32 px-4">
+      <section className="relative overflow-hidden bg-linear-to-br from-slate-900 via-blue-900 to-indigo-900 text-white py-24 md:py-32 px-4">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500/20 rounded-full blur-3xl"></div>
@@ -201,7 +203,7 @@ const HomePage: React.FC = () => {
 
         <div className="relative max-w-7xl mx-auto text-center">
           {/* Animated badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8 animate-fade-in">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/15 mb-8 animate-fade-in">
             <Sparkles className="h-4 w-4" />
             <span className="text-sm font-medium">
               Trusted by 10,000+ users worldwide
@@ -214,32 +216,58 @@ const HomePage: React.FC = () => {
               Money & Habits
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-12 opacity-95 leading-relaxed">
+          <p className="text-xl md:text-2xl text-blue-50/90 max-w-3xl mx-auto mb-12 opacity-95 leading-relaxed">
             The all-in-one platform that transforms your financial life while
             building lasting positive habits. Beautiful, powerful, and
             surprisingly simple.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-16">
-            <Link
-              to="/auth/register"
-              className="group relative px-12 py-5 bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-              <span className="relative flex items-center gap-2">
-                Start Free Trial
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-            <Link
-              to="/auth/login"
-              className="group px-12 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:border-white/50"
-            >
-              <span className="flex items-center gap-2">
-                <Zap className="h-5 w-5" />
-                Already have an account? Sign In
-              </span>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="group relative px-12 py-5 bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02] overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="relative flex items-center gap-2">
+                    Go to Dashboard
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+                <Link
+                  to="/profile"
+                  className="group px-12 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/25 hover:bg-white/18 text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:border-white/40"
+                >
+                  <span className="flex items-center gap-2">
+                    <Zap className="h-5 w-5" />
+                    Manage Account
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/auth/register"
+                  className="group relative px-12 py-5 bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold text-lg rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                  <span className="relative flex items-center gap-2">
+                    Get Started Free
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+                <Link
+                  to="/auth/login"
+                  className="group px-12 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 text-white font-bold text-lg rounded-2xl transition-all duration-300 hover:border-white/50"
+                >
+                  <span className="flex items-center gap-2">
+                    <Zap className="h-5 w-5" />
+                    Sign In to Existing Account
+                  </span>
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Trust indicators */}
@@ -484,22 +512,45 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-5 justify-center items-center">
-              <Link
-                to="/auth/register"
-                className="group relative px-16 py-6 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-              >
-                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-                <span className="relative flex items-center justify-center gap-3">
-                  Get Started Free
-                  <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
-                </span>
-              </Link>
-              <Link
-                to="/auth/login"
-                className="group px-12 py-6 bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-600 hover:text-blue-700 font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                Sign In to Existing Account
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className="group relative px-16 py-6 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
+                  >
+                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                    <span className="relative flex items-center justify-center gap-3">
+                      Open Dashboard
+                      <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                    </span>
+                  </Link>
+                  <Link
+                    to="/profile"
+                    className="group px-12 py-6 bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-700 hover:text-blue-800 font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Manage Profile
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/auth/register"
+                    className="group relative px-16 py-6 bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xl rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-[1.02]"
+                  >
+                    <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+                    <span className="relative flex items-center justify-center gap-3">
+                      Get Started Free
+                      <ArrowRight className="h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                    </span>
+                  </Link>
+                  <Link
+                    to="/auth/login"
+                    className="group px-12 py-6 bg-white border-2 border-blue-600 hover:border-blue-700 text-blue-700 hover:text-blue-800 font-bold text-xl rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Sign In to Existing Account
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 

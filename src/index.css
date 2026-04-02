@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+}
+
 /* Custom animations */
 @layer utilities {
   .animate-fade-in {
